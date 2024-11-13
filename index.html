@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Prototype</h1>
+    <h2>Create New Message</h2>
+    <form id="dataEntryForm">
+        <input type="text" id="title" placeholder="Title" required>
+        <textarea id="description" placeholder="Description" required></textarea>
+        <button type="submit">Submit</button>
+    </form>
+
+    <h2>Existing Messages</h2>
+    <ul id="entryList"></ul>
+
+    <script>
+        // Function to fetch existing entries from local storage
+        function fetchEntries() {
+            const entries = JSON.parse(localStorage.getItem('entries')) || [];
+            const entryList = document.getElementById('entryList');
+            entryList.innerHTML = '';
+            entries.forEach(entry => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `<strong>${entry.title}</strong><br>${entry.description}<br><small>Sent at: ${entry.createdAt}</small>`;
+                entryList.appendChild(listItem);
+            });
+        }
+
+        // Fetch entries on page load
+        window.onload = fetchEntries;
+
+        // Handle form submission
+        document.getElementById('dataEntryForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+
+            const entries = JSON.parse(localStorage.getItem('entries')) || [];
+            const newEntry = {
+                title,
+                description,
+                createdAt: new Date().toLocaleString()
+            };
+            entries.push(newEntry);
+            localStorage.setItem('entries', JSON.stringify(entries));
+
+            // Clear the form
+            document.getElementById('title').value = '';
+            document.getElementById('description').value = '';
+
+            // Refresh the entries
+            fetchEntries();
+        });
+    </script>
+</body>
+</html>
